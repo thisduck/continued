@@ -2,14 +2,20 @@ class Runner
   CommandError = Class.new(Exception)
 
   def run(command)
-    result = %x(#{command}).strip
+    line = Cocaine::CommandLine.new(command, "", :expected_outcodes => [0, 1])
+    result = line.run
     @return_code = $?
+    @output = result
 
-    result
+    output
   end
 
   def return_code
     @return_code
+  end
+
+  def output
+    @output
   end
 
   def success?

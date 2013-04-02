@@ -36,7 +36,7 @@ class Project
   def repository
     return @repository if @repository
 
-    repo = Git.open (repository_path)
+    repo = Git.open(repository_path)
     repo.branch(branch).checkout
     @repository = repo
   end
@@ -67,9 +67,10 @@ class Project
   end
 
   def build
+    user = `whoami`.strip
     runner = Runner.new
     repository.chdir do
-      runner.run "./bin/build.sh"
+      runner.run "sudo su #{user} -c 'cd #{repository_path}; ./bin/build.sh'"
     end
 
     runner
