@@ -8,6 +8,17 @@ gem 'rails', '3.2.13'
 gem 'mongo_mapper'
 gem 'bson_ext'
 
+# server stuffs
+gem 'thin'
+gem 'foreman'
+
+# delayed jobs
+gem 'delayed_job'
+gem 'delayed_job_mongo_mapper', :git => "git://github.com/thisduck/delayed_job_mongo_mapper.git"
+
+# git
+gem 'git'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do

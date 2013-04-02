@@ -1,0 +1,5 @@
+development: &development
+  repositories_path: /Users/adnan/codes/repos
+
+production:
+  <<: *development

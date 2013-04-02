@@ -1,0 +1,77 @@
+class Project
+  include MongoMapper::Document
+
+  key :name, String
+  key :repository_url, String
+  key :branch, String
+  key :last_sha, String
+
+  def setup!
+    clone_repository
+    update_sha
+    save!
+  end
+
+  def repository_path
+    File.join CONTINUE_CONFIG['repositories_path'], name.parameterize, branch
+  end
+
+  def clone_repository
+    FileUtils.mkdir_p repository_path
+
+    repo = begin
+      repository
+    rescue ArgumentError
+      Git.clone(repository_url, "#{name.parameterize}/#{branch}", :path => CONTINUE_CONFIG['repositories_path'])
+    end
+
+    repo.branch(branch).checkout
+    repo
+  end
+
+  def repository_or_clone
+    clone_repository
+  end
+
+  def repository
+    return @repository if @repository
+
+    repo = Git.open (repository_path)
+    repo.branch(branch).checkout
+    @repository = repo
+  end
+
+  def update_sha
+    self.last_sha = repository.log.first.sha
+  end
+
+  def update_sha!
+    update_sha
+    save!
+  end
+
+  def pull_hard!
+    repository.reset_hard
+    clean
+    repository.pull
+
+    update_sha!
+  end
+
+  def clean
+    repository.chdir do
+      repository.status.untracked.each do |file|
+        File.unlink file.first
+      end
+    end
+  end
+
+  def build
+    runner = Runner.new
+    repository.chdir do
+      runner.run "./bin/build.sh"
+    end
+
+    runner
+  end
+end
