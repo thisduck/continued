@@ -19,11 +19,15 @@ gem 'delayed_job_mongo_mapper', :git => "git://github.com/thisduck/delayed_job_m
 # git
 gem 'git'
 
+# for the js
 gem "therubyracer", :require => 'v8'
 
 # command line
 gem 'posix-spawn'
 gem 'cocaine'
+
+# schedules
+gem "rufus-scheduler"
 
 # Gems used only for assets and not required
 # in production environments by default.

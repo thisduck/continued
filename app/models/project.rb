@@ -7,6 +7,15 @@ class Project
   key :last_sha, String
   timestamps!
 
+  has_many :builds
+
+  def self.build_all
+    Project.all.each do |project|
+      next if project.builds.running.any?
+      Build.delay.for project.id
+    end
+  end
+
   def setup!
     clone_repository
     update_sha
@@ -54,7 +63,10 @@ class Project
   def pull_hard!
     repository.reset_hard
     clean
-    repository.pull
+    repository.branch(branch).checkout
+    repository.fetch
+    repository.reset_hard("origin/#{branch}")
+    repository.pull(repository.repo, repository.branch(branch))
 
     update_sha!
   end

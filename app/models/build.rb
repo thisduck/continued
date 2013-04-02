@@ -13,7 +13,22 @@ class Build
 
   belongs_to :project
 
+  def self.running
+    where(:state => "running")
+  end
+
   def self.for project, options = {}
+    if Build.running.any?
+      Build.delay(:run_at => 5.minutes.from_now).for project, options
+      return
+    end
+
+    if project.is_a?(String) || project.is_a?(BSON::ObjectId)
+      project = Project.find project
+    end
+
+    BuildMailer.build_trying(project).deliver
+
     last_sha = project.last_sha
     project.pull_hard!
 
@@ -33,6 +48,7 @@ class Build
   end
 
   def run
+    BuildMailer.build_started(self).deliver
     self.started_at = Time.now
 
     result = project.run_build
@@ -40,6 +56,7 @@ class Build
     self.state = result.success?? "success" : "fail"
 
     self.ended_at = Time.now
+    BuildMailer.build_finished(self).deliver
 
     collect_diff_info
   end
