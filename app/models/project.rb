@@ -5,6 +5,7 @@ class Project
   key :repository_url, String
   key :branch, String
   key :last_sha, String
+  timestamps!
 
   def setup!
     clone_repository
@@ -66,9 +67,9 @@ class Project
     end
   end
 
-  def build
-    user = `whoami`.strip
+  def run_build
     runner = Runner.new
+    user = `whoami`.strip
     repository.chdir do
       runner.run "sudo su #{user} -c 'cd #{repository_path}; ./bin/build.sh'"
     end
