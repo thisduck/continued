@@ -3,9 +3,12 @@ class Build
 
   key :state, String
   key :output, String
+  key :last_sha, String
   key :sha, String
   key :started_at, Time
   key :ended_at, Time
+  key :logs, Array
+  key :diff, String
   timestamps!
 
   belongs_to :project
@@ -19,6 +22,7 @@ class Build
     build = self.new({
       :project => project,
       :sha => project.last_sha,
+      :last_sha => last_sha,
       :state => "running",
     })
 
@@ -36,6 +40,8 @@ class Build
     self.state = result.success?? "success" : "fail"
 
     self.ended_at = Time.now
+
+    collect_diff_info
   end
 
   def run!
@@ -49,5 +55,16 @@ class Build
 
   def success?
     state == "success"
+  end
+
+  def collect_diff_info
+    return if success? || last_sha.blank?
+    self.logs = project.repository.log.between(last_sa, sha).collect(&:to_hash)
+    self.diff = project.repository.diff(last_sha, sha).patch
+  end
+
+  def collect_diff_info!
+    collect_diff_info
+    save!
   end
 end
