@@ -27,7 +27,7 @@ class Build
       project = Project.find project
     end
 
-    BuildMailer.build_trying(project).deliver
+    #BuildMailer.build_trying(project).deliver
 
     last_sha = project.last_sha
     project.pull_hard!
@@ -51,14 +51,27 @@ class Build
     BuildMailer.build_started(self).deliver
     self.started_at = Time.now
 
-    result = project.run_build
-    self.output = result.output
-    self.state = result.success?? "success" : "fail"
+    begin
+      results = project.run_build
 
-    self.ended_at = Time.now
+      outputs = []
+      results.each do |result|
+        outputs << "COMMAND: #{result.command}"
+        outputs << result.output
+        outputs << "\n"
+      end
+
+      self.output = outputs.join "\n"
+      self.state = results.collect(&:success?).all? ? "pass" : "fail"
+
+      self.ended_at = Time.now
+      collect_diff_info
+    rescue Exception => e
+      self.output = "#{e.message}\n\n#{e.backtrace}"
+      self.state = "crashed"
+    end
+
     BuildMailer.build_finished(self).deliver
-
-    collect_diff_info
   end
 
   def run!
@@ -71,7 +84,7 @@ class Build
   end
 
   def success?
-    state == "success"
+    state == "pass"
   end
 
   def collect_diff_info
@@ -83,5 +96,13 @@ class Build
   def collect_diff_info!
     collect_diff_info
     save!
+  end
+
+  def html_output
+    file_name = "/tmp/output_#{id}"
+    File.open(file_name, "wb") {|f| f.write output }
+    result = `cat #{file_name} | aha `
+    result =~ /<pre>(.*)<\/pre>/m
+    $1
   end
 end

@@ -1,0 +1,7 @@
+  <pre>
+    Time Taken: <%= @build.time_taken %> seconds.
+    <% if !@build.success? %>
+    Output:
+    <%= raw @build.html_output %>
+    <% end %>
+  </pre>

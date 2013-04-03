@@ -6,8 +6,13 @@ class Runner
     result = line.run
     @return_code = $?
     @output = result
+    @command = command
 
     output
+  end
+
+  def command
+    @command
   end
 
   def return_code

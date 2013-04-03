@@ -15,7 +15,7 @@ class BuildMailer < ActionMailer::Base
   def build_finished(build)
     @build = build
     mail to: CONTINUE_CONFIG['emails'],
-      subject: "Build finished for #{project_name build.project} [#{build.id}]"
+      subject: "Build finished for #{project_name build.project} [#{build.id}] [#{build.state}]"
   end
 
   protected
