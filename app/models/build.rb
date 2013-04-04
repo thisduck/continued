@@ -9,6 +9,7 @@ class Build
   key :ended_at, Time
   key :logs, Array
   key :diff, String
+  key :forced, Boolean
   timestamps!
 
   belongs_to :project
@@ -32,15 +33,17 @@ class Build
     last_sha = project.last_sha
     project.pull_hard!
 
-    return if !options[:force] && last_sha == project.last_sha
-
     build = self.new({
+      :forced => options[:force],
       :project => project,
       :sha => project.last_sha,
       :last_sha => last_sha,
-      :state => "running",
+      :state => "new",
     })
 
+    return build if !build.should_build?
+
+    build.state = "running"
     build.save!
     build.run!
 
@@ -108,5 +111,9 @@ class Build
 
   def send_finished_email?
     !self.success? || !self.project.builds.where(:id.ne => self.id).sort(:created_at).last.try(:success?)
+  end
+
+  def should_build?
+    forced || last_sha != sha || project.builds.none?
   end
 end
