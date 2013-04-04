@@ -89,7 +89,7 @@ class Build
 
   def collect_diff_info
     return if success? || last_sha.blank?
-    self.logs = project.repository.log.between(last_sa, sha).collect(&:to_hash)
+    self.logs = project.repository.log.between(last_sha, sha).collect(&:to_hash)
     self.diff = project.repository.diff(last_sha, sha).patch
   end
 
