@@ -19,7 +19,7 @@ class Build
 
   def self.for project, options = {}
     if Build.running.any?
-      Build.delay(:run_at => 5.minutes.from_now).for project, options
+      Build.delay.for project, options
       return
     end
 
