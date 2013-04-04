@@ -14,6 +14,7 @@ class BuildMailer < ActionMailer::Base
 
   def build_finished(build)
     @build = build
+    attachments["output.html"] = render_to_string(:template => 'builds/output.html.erb', :layout => false, :locals => {:build => build})
     mail to: CONTINUE_CONFIG['emails'],
       subject: "Build finished for #{project_name build.project} [#{build.id}] [#{build.state}]"
   end

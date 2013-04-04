@@ -86,7 +86,7 @@ class Project
       runner = Runner.new
       user = `whoami`.strip
       repository.chdir do
-        runner.run "sudo su #{user} -c 'cd #{repository_path}; BRANCH=#{branch} #{script}'"
+        runner.run "sudo su #{user} -c 'cd #{repository_path} && BRANCH=#{branch} #{script}'"
       end
 
       runner

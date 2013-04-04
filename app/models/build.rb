@@ -48,7 +48,7 @@ class Build
   end
 
   def run
-    BuildMailer.build_started(self).deliver
+    #BuildMailer.build_started(self).deliver
     self.started_at = Time.now
 
     begin
@@ -71,7 +71,7 @@ class Build
       self.state = "crashed"
     end
 
-    BuildMailer.build_finished(self).deliver
+    BuildMailer.build_finished(self).deliver if send_finished_email?
   end
 
   def run!
@@ -104,5 +104,9 @@ class Build
     result = `cat #{file_name} | aha `
     result =~ /<pre>(.*)<\/pre>/m
     $1
+  end
+
+  def send_finished_email?
+    !self.success? || !self.project.builds.where(:id.ne => self.id).sort(:created_at).last.try(:success?)
   end
 end
