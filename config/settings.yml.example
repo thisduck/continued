@@ -1,6 +1,8 @@
 development: &development
   repositories_path: /Users/adnanali/codes/repos
   emails: adnan@communitylend.com
+  from_email: email@example.com
+  exception_emails: email@example.com
 
 production:
   <<: *development

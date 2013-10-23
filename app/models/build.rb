@@ -7,7 +7,6 @@ class Build < ActiveRecord::Base
 
   def self.for project, options = {}
     if Build.running.any?
-      Build.delay.for project, options
       return
     end
 
@@ -15,10 +14,16 @@ class Build < ActiveRecord::Base
       project = Project.find project
     end
 
-    #BuildMailer.build_trying(project).deliver
+    BuildMailer.build_trying(project).deliver
 
     last_sha = project.last_sha
-    project.pull_hard!
+    begin
+      project.pull_hard!
+    rescue Exception => e
+      BuildMailer.send_exception(e).deliver
+
+      return
+    end
 
     build = self.new({
       :forced => options[:force],

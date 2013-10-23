@@ -3,8 +3,10 @@ class Project < ActiveRecord::Base
   has_many :builds
 
   def self.build_all
+    Rails.logger.info "building all?"
     Project.all.each do |project|
       next if project.builds.running.any?
+      Rails.logger.info "building something #{project}?"
       Build.delay.for project.id
     end
   end
@@ -79,6 +81,7 @@ class Project < ActiveRecord::Base
       runner = Runner.new
       user = `whoami`.strip
       repository.chdir do
+        #runner.run "sudo su #{user} -c 'cd #{repository_path} && ls'"
         runner.run "sudo su #{user} -c 'cd #{repository_path} && BRANCH=#{branch} #{script}'"
       end
 
