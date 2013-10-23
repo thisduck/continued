@@ -1,12 +1,3 @@
-GIT
-  remote: git://github.com/thisduck/delayed_job_mongo_mapper.git
-  revision: ebabefef494b33544762fcdbbecc4c9f2c903f18
-  specs:
-    delayed_job_mongo_mapper (1.0.9)
-      delayed_job (~> 3.0.0)
-      mongo_mapper (>= 0.11.0)
-      tzinfo (~> 0.3.31)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -38,9 +29,6 @@ GEM
       i18n (= 0.6.1)
       multi_json (~> 1.0)
     arel (3.0.2)
-    bson (1.8.4)
-    bson_ext (1.8.4)
-      bson (~> 1.8.4)
     builder (3.0.4)
     climate_control (0.0.3)
       activesupport (>= 3.0)
@@ -56,6 +44,9 @@ GEM
     daemons (1.1.9)
     delayed_job (3.0.5)
       activesupport (~> 3.0)
+    delayed_job_active_record (0.3.3)
+      activerecord (>= 2.1.0, < 4)
+      delayed_job (~> 3.0)
     erubis (2.7.0)
     eventmachine (1.0.3)
     execjs (1.4.0)
@@ -76,15 +67,10 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.22)
-    mongo (1.8.4)
-      bson (~> 1.8.4)
-    mongo_mapper (0.12.0)
-      activemodel (~> 3.0)
-      activesupport (~> 3.0)
-      plucky (~> 0.5.2)
     multi_json (1.7.2)
-    plucky (0.5.2)
-      mongo (~> 1.5)
+    mysql2 (0.3.13)
+    polyamorous (0.5.0)
+      activerecord (~> 3.0)
     polyglot (0.3.3)
     posix-spawn (0.3.6)
     rack (1.4.5)
@@ -125,6 +111,10 @@ GEM
       multi_json (~> 1.0)
       rack (~> 1.0)
       tilt (~> 1.1, != 1.3.0)
+    squeel (1.0.13)
+      activerecord (~> 3.0)
+      activesupport (~> 3.0)
+      polyamorous (~> 0.5.0)
     therubyracer (0.11.4)
       libv8 (~> 3.11.8.12)
       ref
@@ -146,19 +136,19 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bson_ext
   cocaine
   coffee-rails (~> 3.2.1)
   delayed_job
-  delayed_job_mongo_mapper!
+  delayed_job_active_record
   foreman
   git
   jquery-rails
-  mongo_mapper
+  mysql2
   posix-spawn
   rails (= 3.2.13)
   rufus-scheduler
   sass-rails (~> 3.2.3)
+  squeel
   therubyracer
   thin
   uglifier (>= 1.0.3)

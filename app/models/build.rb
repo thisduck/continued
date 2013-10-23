@@ -1,17 +1,4 @@
-class Build
-  include MongoMapper::Document
-
-  key :state, String
-  key :output, String
-  key :last_sha, String
-  key :sha, String
-  key :started_at, Time
-  key :ended_at, Time
-  key :logs, Array
-  key :diff, String
-  key :forced, Boolean
-  timestamps!
-
+class Build < ActiveRecord::Base
   belongs_to :project
 
   def self.running
@@ -24,7 +11,7 @@ class Build
       return
     end
 
-    if project.is_a?(String) || project.is_a?(BSON::ObjectId)
+    if !project.is_a?(Project)
       project = Project.find project
     end
 
@@ -110,7 +97,7 @@ class Build
   end
 
   def send_finished_email?
-    !self.success? || !self.project.builds.where(:id.ne => self.id).sort(:created_at).last.try(:success?)
+    !self.success? || !self.project.builds.where{id.not_eq(self.id)}.sort(:created_at).last.try(:success?)
   end
 
   def should_build?

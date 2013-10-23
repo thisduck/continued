@@ -1,5 +1,5 @@
 development: &development
-  repositories_path: /Users/adnan/codes/repos
+  repositories_path: /Users/adnanali/codes/repos
   emails: adnan@communitylend.com
 
 production:

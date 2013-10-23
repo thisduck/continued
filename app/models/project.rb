@@ -1,11 +1,4 @@
-class Project
-  include MongoMapper::Document
-
-  key :name, String
-  key :repository_url, String
-  key :branch, String
-  key :last_sha, String
-  timestamps!
+class Project < ActiveRecord::Base
 
   has_many :builds
 

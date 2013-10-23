@@ -5,8 +5,9 @@ gem 'rails', '3.2.13'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'mongo_mapper'
-gem 'bson_ext'
+gem 'mysql2'
+#gem 'activerecord-mysql-adapter'
+gem "squeel" 
 
 # server stuffs
 gem 'thin'
@@ -14,7 +15,7 @@ gem 'foreman'
 
 # delayed jobs
 gem 'delayed_job'
-gem 'delayed_job_mongo_mapper', :git => "git://github.com/thisduck/delayed_job_mongo_mapper.git"
+gem 'delayed_job_active_record'
 
 # git
 gem 'git'
